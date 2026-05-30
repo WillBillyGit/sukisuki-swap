@@ -95,10 +95,10 @@ export const SUPPORTED_CHAINS: Chain[] = [
   },
   {
     id: "kaia",
-    name: "Kaia",
+    name: "Kaia Testnet Kairos",
     icon: "🟢",
     color: "bg-emerald-600",
-    explorerUrl: "https://kaiascan.io/tx",
+    explorerUrl: "https://kairos.kaiascan.io/tx",
     isSupported: true,
     tokens: [
       { id: "kaia", symbol: "KAIA", name: "Kaia Token", icon: "🟢", decimals: 18, priceUsd: 0.142, balance: 520.0 },

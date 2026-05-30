@@ -24,6 +24,12 @@ export default function App() {
   const [thirdwebProjectId, setThirdwebProjectId] = useState<string>(() => {
     return localStorage.getItem("suki_thirdweb_project_id") || "prj_cmpp8wtng0sknb60ls28kd2w2";
   });
+  const [thirdwebPrivateKey, setThirdwebPrivateKey] = useState<string>(() => {
+    return localStorage.getItem("suki_thirdweb_private_key") || "";
+  });
+  const [kaiaChainId, setKaiaChainId] = useState<string>(() => {
+    return localStorage.getItem("suki_kaia_chain_id") || "2031";
+  });
 
   // Modal open controllers
   const [showSettings, setShowSettings] = useState(false);
@@ -337,13 +343,17 @@ export default function App() {
             setThirdwebClientId={(id) => {
               setThirdwebClientId(id);
               if (id) {
-                setSukiReaction("Yay! Thirdweb custom credentials loaded successfully! Real bindings active! ~u~ 🛡️🦞");
+                setSukiReaction("Yay! Thirdweb custom credentials loaded successfully! Real bindings active! 🛡️🌸");
               } else {
                 setSukiReaction("Active connection successfully reset. Fallback deep-sea engines online!");
               }
             }}
             thirdwebProjectId={thirdwebProjectId}
             setThirdwebProjectId={setThirdwebProjectId}
+            thirdwebPrivateKey={thirdwebPrivateKey}
+            setThirdwebPrivateKey={setThirdwebPrivateKey}
+            kaiaChainId={kaiaChainId}
+            setKaiaChainId={setKaiaChainId}
           />
         )}
 

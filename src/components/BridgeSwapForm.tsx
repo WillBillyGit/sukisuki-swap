@@ -45,6 +45,7 @@ export default function BridgeSwapForm({
   const [showSettings, setShowSettings] = useState(false);
   const [bridgeRoute, setBridgeRoute] = useState("crust-express"); // "crust-express" | "rainbow-bridge" | "connext"
   const [isCalculatedPriceUpdating, setIsCalculatedPriceUpdating] = useState(false);
+  const [copiedContract, setCopiedContract] = useState(false);
 
   const sourceChain = chains.find((c) => c.id === selectedSourceChain) || chains[0];
   const targetChain = chains.find((c) => c.id === selectedTargetChain) || chains[1];
@@ -91,6 +92,9 @@ export default function BridgeSwapForm({
   const numericAmount = parseFloat(payAmount) || 0;
   const payValueUsd = numericAmount * sourceToken.priceUsd;
 
+  const isSellingSuki = sourceToken.symbol === "SUKI";
+  const isSukiActive = sourceToken.symbol === "SUKI" || targetToken.symbol === "SUKI";
+
   // Simple formula to estimate target token amount based on price ratio minus theoretical bridge/gas fee
   const rateRatio = sourceToken.priceUsd / targetToken.priceUsd;
   const rawReceive = numericAmount * rateRatio;
@@ -98,7 +102,10 @@ export default function BridgeSwapForm({
   const staticNetworkFeeUsd = bridgeRoute === "crust-express" ? 1.5 : 0.4;
   const feeInTargetTokens = (payValueUsd * feeRate + staticNetworkFeeUsd) / targetToken.priceUsd;
 
-  const receiveAmount = Math.max(0, rawReceive - feeInTargetTokens);
+  // Subtract the 15% fee that gets locked in the Crust Fund to push up the price floor
+  const crustFundContributionAmount = isSellingSuki ? rawReceive * 0.15 : 0;
+
+  const receiveAmount = Math.max(0, rawReceive - feeInTargetTokens - crustFundContributionAmount);
   const receiveValueUsd = receiveAmount * targetToken.priceUsd;
 
   const handleBridgeAction = () => {
@@ -374,6 +381,43 @@ export default function BridgeSwapForm({
             {bridgeRoute === "crust-express" ? "Instant (≈ 5s)" : "Normal (≈ 2-3m)"}
           </span>
         </div>
+
+        {/* Crust Fund Details (Only active when selling SUKI) */}
+        {isSellingSuki && (
+          <div className="mt-3 pt-3 border-t border-dashed border-pink-100 space-y-2">
+            <div className="flex justify-between items-center text-rose-500 font-semibold">
+              <span className="flex items-center gap-1">🌸 Crust Fund Contribution</span>
+              <span className="font-mono bg-rose-50 px-2 py-0.5 rounded text-[11px]">15%</span>
+            </div>
+            <div className="flex justify-between items-center text-emerald-600 font-extrabold bg-emerald-50/75 p-2 rounded-xl border border-emerald-100/50">
+              <span className="flex items-center gap-1 text-[11px]">🟢 Guaranteed Price Floor</span>
+              <span className="font-mono text-xs">${(sourceToken.priceUsd * 0.68).toFixed(4)} USD</span>
+            </div>
+          </div>
+        )}
+
+        {/* Verified SUKI Smart Contract Badge */}
+        {isSukiActive && (
+          <div className="mt-3 pt-2.5 border-t border-dashed border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-[10px] text-slate-500">
+            <span className="flex items-center gap-1 font-semibold text-slate-400">
+              <Star className="w-3 h-3 text-amber-500 fill-amber-300/20 animate-spin" /> Verified ARBCv3:
+            </span>
+            <div className="flex items-center gap-1.5 bg-slate-100/80 px-2 py-1 rounded-lg font-mono font-bold text-slate-600 border border-slate-200/50 select-all tracking-wide shrink-0">
+              <span className="text-[10px]">0x3312...AD72</span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText("0x3312dCF2E92b41F57583731a7f6B9Ed4DAa0AD72");
+                  setCopiedContract(true);
+                  setTimeout(() => setCopiedContract(false), 2000);
+                }}
+                className="text-indigo-600 hover:text-indigo-800 transition cursor-pointer font-sans text-[9px] font-bold"
+              >
+                {copiedContract ? "Copied!" : "Copy"}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* CTA Button */}
