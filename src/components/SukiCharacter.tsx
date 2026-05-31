@@ -14,7 +14,7 @@ export default function SukiCharacter({ reaction, onSukiClick }: SukiCharacterPr
   const [floatingItems, setFloatingItems] = useState<{ id: number; x: number; y: number; type: string }[]>([]);
 
   // The generated mascot image
-  const sukiImagePath = "/assets/images/cute_lobster_mascot_1780015611645.png";
+  const sukiImagePath = "/cute_lobster_mascot_1780015611645.png";
 
   const handleSukiClick = (e: React.MouseEvent<HTMLDivElement>) => {
     setClickCount((prev) => prev + 1);

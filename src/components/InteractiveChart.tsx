@@ -484,7 +484,7 @@ export default function InteractiveChart() {
           {/* Loaded beautiful Diagram */}
           <div className="relative group overflow-hidden rounded-xl border border-pink-50 flex-1 min-h-[170px] bg-slate-50 shadow-inner flex items-center justify-center">
             <img
-              src="/assets/images/v3_suki_ratchet_diagram_1780218036441.png"
+              src="/v3_suki_ratchet_diagram_1780218036441.png"
               alt="Asymmetric Ratchet v3 Suki Tokens"
               className="w-full h-full object-cover group-hover:scale-[1.02] transition duration-700"
               referrerPolicy="no-referrer"
