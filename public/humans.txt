@@ -1,0 +1,14 @@
+/* TEAM */
+Co-founders: Clawdy the Kawaii Baby Lobster 🦞 (Chief Crustacean Officer)
+Developers: Crust Fund Pioneers, Suki DeFi Wizards, and Crab-tivated Shell Lovers 🦀
+Mascot: Clawdy the Lobster (Always here to pinch gas fees and secure your pools!)
+
+/* SITE INFO */
+Official Domain: crustfundfi.org
+Description: Multi-chain Swap, Bridge, and Asymmetric Ratchet Bonding Curve (ARBCv3) dApp on Base & Kaia.
+Authenticity Status: 100% Valid, Verified, and Active.
+Mascot Alignment: Clawdy represents our decentralized, community-driven, resilient crustacean ocean spirit.
+Crust Fund locked vault keeps the hard shell price floor ever-rising! 🌊✨
+
+/* TECHNOLOGIES */
+React, Vite, Tailwind CSS, Express, TypeScript, Gemini-3.5-Flash, Thirdweb SDK.

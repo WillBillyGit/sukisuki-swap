@@ -3,6 +3,8 @@ import { Chain, Token } from "../types";
 import { ArrowDownUp, RefreshCw, Star, Info, Settings2, Zap, Hourglass } from "lucide-react";
 import { motion } from "motion/react";
 
+const marineChainsImg = "/src/assets/images/marine_chains_1780217348244.png";
+
 interface BridgeSwapFormProps {
   chains: Chain[];
   selectedSourceChain: string;
@@ -119,6 +121,15 @@ export default function BridgeSwapForm({
       bridgeRoute
     );
   };
+
+  // Show active chain mapping for verification badge
+  const sukiChain = (sourceToken.symbol === "SUKI" ? sourceChain : targetChain) || sourceChain;
+  const isBaseDeployment = sukiChain.id === "base";
+  const activeSukiContractAddress = isBaseDeployment 
+    ? "0xdf501E7C19B3D1cFbA53C375c9c630cE554a3447" 
+    : "0x3312dCF2E92b41F57583731a7f6B9Ed4DAa0AD72";
+  const activeSukiContractLabel = isBaseDeployment ? "Base ARBCv3 SUKI" : "Kaia ARBCv3 KAIROS";
+  const activeSukiShortAddress = isBaseDeployment ? "0xdf50...3447" : "0x3312...AD72";
 
   return (
     <div className="bg-white/80 backdrop-blur-xl border border-pink-100 rounded-3xl p-6 shadow-xl shadow-pink-100/30 flex flex-col relative overflow-hidden">
@@ -400,14 +411,14 @@ export default function BridgeSwapForm({
         {isSukiActive && (
           <div className="mt-3 pt-2.5 border-t border-dashed border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-[10px] text-slate-500">
             <span className="flex items-center gap-1 font-semibold text-slate-400">
-              <Star className="w-3 h-3 text-amber-500 fill-amber-300/20 animate-spin" /> Verified ARBCv3:
+              <Star className="w-3 h-3 text-amber-500 fill-amber-300/20 " /> {activeSukiContractLabel}:
             </span>
             <div className="flex items-center gap-1.5 bg-slate-100/80 px-2 py-1 rounded-lg font-mono font-bold text-slate-600 border border-slate-200/50 select-all tracking-wide shrink-0">
-              <span className="text-[10px]">0x3312...AD72</span>
+              <span className="text-[10px]">{activeSukiShortAddress}</span>
               <button
                 type="button"
                 onClick={() => {
-                  navigator.clipboard.writeText("0x3312dCF2E92b41F57583731a7f6B9Ed4DAa0AD72");
+                  navigator.clipboard.writeText(activeSukiContractAddress);
                   setCopiedContract(true);
                   setTimeout(() => setCopiedContract(false), 2000);
                 }}
@@ -418,6 +429,33 @@ export default function BridgeSwapForm({
             </div>
           </div>
         )}
+      </div>
+
+      {/* Marine Chains Reference Banner */}
+      <div className="mb-5 overflow-hidden rounded-2xl border border-pink-100/40 bg-gradient-to-br from-pink-50/20 to-indigo-50/20 p-3 flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <span className="font-sans text-[10px] font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+            🌍 Supported Marine Networks
+          </span>
+          <span className="text-[9px] font-bold text-pink-500 bg-pink-50/85 px-2 py-0.5 rounded-md font-sans">
+            Multi-Chain
+          </span>
+        </div>
+        <div className="relative group overflow-hidden rounded-xl border border-slate-100 shadow-sm aspect-[121/64] bg-slate-100">
+          <img
+            src={marineChainsImg}
+            alt="Supported Marine Networks"
+            className="w-full h-full object-cover group-hover:scale-[1.03] transition duration-500"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute bottom-2 left-2.5 right-2 flex items-center justify-between text-[10px] text-white font-sans drop-shadow-sm font-bold pointer-events-none">
+            <span>Base, Kaia, Arbitrum, Optimism...</span>
+            <span className="text-[9px] bg-slate-900/80 backdrop-blur-xs text-white px-2 py-0.5 rounded-full font-bold">
+              Chibi Reef 🐚
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* CTA Button */}

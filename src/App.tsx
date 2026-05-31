@@ -8,6 +8,8 @@ import InteractiveChart from "./components/InteractiveChart";
 import TxHistory from "./components/TxHistory";
 import ThirdwebSettings from "./components/ThirdwebSettings";
 import WalletModal from "./components/WalletModal";
+import Web3Footer from "./components/Web3Footer";
+import ReadmeDocsModal from "./components/ReadmeDocsModal";
 import { Shield, Sparkles, Sliders, Wallet, Check, Network, AlertCircle, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -34,6 +36,7 @@ export default function App() {
   // Modal open controllers
   const [showSettings, setShowSettings] = useState(false);
   const [showWalletModal, setShowWalletModal] = useState(false);
+  const [showReadme, setShowReadme] = useState(false);
 
   // Form selections
   const [selectedSourceChain, setSelectedSourceChain] = useState("kaia");
@@ -333,6 +336,9 @@ export default function App() {
         </div>
       </main>
 
+      {/* Web3 Verified Footer */}
+      <Web3Footer onOpenReadme={() => setShowReadme(true)} />
+
       {/* MODALS CONTROLLERS */}
       <AnimatePresence>
         {showSettings && (
@@ -362,6 +368,14 @@ export default function App() {
             isOpen={showWalletModal}
             onClose={() => setShowWalletModal(false)}
             onConnect={handleConnectWallet}
+          />
+        )}
+
+        {/* Readme Documentation Modal */}
+        {showReadme && (
+          <ReadmeDocsModal
+            isOpen={showReadme}
+            onClose={() => setShowReadme(false)}
           />
         )}
       </AnimatePresence>

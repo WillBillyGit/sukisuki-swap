@@ -34,7 +34,9 @@ export default function ThirdwebSettings({
   const [successMsg, setSuccessMsg] = useState("");
   const [copied, setCopied] = useState(false);
   const [copiedContract, setCopiedContract] = useState(false);
+  const [copiedBaseContract, setCopiedBaseContract] = useState(false);
   const [copiedOwner, setCopiedOwner] = useState(false);
+  const [codeNetwork, setCodeNetwork] = useState<"kaia" | "base">("kaia");
 
   if (!isOpen) return null;
 
@@ -53,11 +55,14 @@ export default function ThirdwebSettings({
     setTimeout(() => setSuccessMsg(""), 2500);
   };
 
-  const codeSnippet = `import { createThirdwebClient, privateKeyToAccount } from "thirdweb";
+  const kaiaCodeSnippet = `import { createThirdwebClient, privateKeyToAccount } from "thirdweb";
 import { defineChain } from "thirdweb/chains";
 
 // Configured Kaia Testnet Kairos chain ID
 const kaiaChain = defineChain(${chainIdInput || "1001"});
+
+// Verified Contract ARBCv3 SUKI on Kaia
+const SUKI_CONTRACT = "0x3312dCF2E92b41F57583731a7f6B9Ed4DAa0AD72";
 
 // Private key decrypted safely at execution
 const PRIVATE_KEY = "${privateKeyInput || "your_private_key_here"}";
@@ -73,6 +78,32 @@ const account = privateKeyToAccount({
 
 // Connected wallet address
 console.log("Wallet address:", account.address);`;
+
+  const baseCodeSnippet = `import { createThirdwebClient, privateKeyToAccount } from "thirdweb";
+import { defineChain } from "thirdweb/chains";
+
+// Configured Base Mainnet chain(8453)
+const baseChain = defineChain(8453);
+
+// Verified Contract ARBCv3 SukiSuki on Base
+const SUKI_SUKI_CONTRACT = "0xdf501E7C19B3D1cFbA53C375c9c630cE554a3447";
+
+// Private key decrypted safely at deployment execution
+const PRIVATE_KEY = "${privateKeyInput || "your_private_key_here"}";
+
+const client = createThirdwebClient({
+  secretKey: "your_thirdweb_project_secret_key", // Setup via env vars
+});
+
+const account = privateKeyToAccount({
+  client,
+  privateKey: PRIVATE_KEY,
+});
+
+// Connected wallet address
+console.log("Wallet address:", account.address);`;
+
+  const codeSnippet = codeNetwork === "kaia" ? kaiaCodeSnippet : baseCodeSnippet;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(codeSnippet);
@@ -117,11 +148,11 @@ console.log("Wallet address:", account.address);`;
           </p>
 
           {/* Official Verification Details */}
-          <div className="bg-gradient-to-r from-pink-50/50 to-indigo-50/50 rounded-2xl p-4 border border-pink-100/40 space-y-3">
+          <div className="bg-gradient-to-r from-pink-50/50 to-indigo-50/50 rounded-2xl p-4 border border-pink-100/40 space-y-3.5">
             <div>
               <div className="flex justify-between items-center mb-1">
                 <span className="font-sans text-[10px] font-extrabold text-slate-600 uppercase tracking-wide flex items-center gap-1">
-                  <Shield className="w-3.5 h-3.5 text-emerald-500" /> Active Contract Address (ARBCv3)
+                  <Shield className="w-3.5 h-3.5 text-emerald-500" /> Kaia Testnet Kairos Contract (ARBCv3)
                 </span>
                 <button
                   type="button"
@@ -146,7 +177,32 @@ console.log("Wallet address:", account.address);`;
             <div>
               <div className="flex justify-between items-center mb-1">
                 <span className="font-sans text-[10px] font-extrabold text-slate-600 uppercase tracking-wide flex items-center gap-1">
-                  Owner/Creator Wallet
+                  <Shield className="w-3.5 h-3.5 text-blue-500" /> Base Mainnet Contract (ARBCv3)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText("0xdf501E7C19B3D1cFbA53C375c9c630cE554a3447");
+                    setCopiedBaseContract(true);
+                    setTimeout(() => setCopiedBaseContract(false), 1500);
+                  }}
+                  className="text-[9px] font-sans font-bold text-slate-500 hover:text-indigo-600 flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-slate-200 transition cursor-pointer shadow-sm"
+                >
+                  {copiedBaseContract ? <Check className="w-2.5 h-2.5 text-emerald-500" /> : <Copy className="w-2.5 h-2.5" />}
+                  {copiedBaseContract ? "Copied" : "Copy"}
+                </button>
+              </div>
+              <div className="bg-slate-900/5 px-3 py-1.5 rounded-xl border border-slate-200/50">
+                <span className="font-mono text-xs text-slate-700 font-bold select-all break-all text-blue-800">
+                  0xdf501E7C19B3D1cFbA53C375c9c630cE554a3447
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-sans text-[10px] font-extrabold text-slate-600 uppercase tracking-wide flex items-center gap-1">
+                  Project Owner/Creator Wallet (Contracts Admin)
                 </span>
                 <button
                   type="button"
@@ -227,10 +283,32 @@ console.log("Wallet address:", account.address);`;
 
           {/* Connected state snippet preview code */}
           <div className="space-y-1.5">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-wrap justify-between items-center gap-2">
               <span className="font-sans text-[10px] font-extrabold text-slate-400 uppercase tracking-wide flex items-center gap-1">
                 <Shield className="w-3 h-3 text-pink-500" /> Custom Deployment Script (Live)
               </span>
+              
+              <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200/40">
+                <button
+                  type="button"
+                  onClick={() => setCodeNetwork("kaia")}
+                  className={`text-[9px] px-2 py-0.5 rounded font-bold cursor-pointer transition ${
+                    codeNetwork === "kaia" ? "bg-white text-emerald-600 shadow-sm" : "text-slate-400 hover:text-slate-600"
+                  }`}
+                >
+                  Kaia Kairos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCodeNetwork("base")}
+                  className={`text-[9px] px-2 py-0.5 rounded font-bold cursor-pointer transition ${
+                    codeNetwork === "base" ? "bg-white text-blue-600 shadow-sm" : "text-slate-400 hover:text-slate-600"
+                  }`}
+                >
+                  Base Mainnet
+                </button>
+              </div>
+
               <button
                 type="button"
                 onClick={handleCopy}
