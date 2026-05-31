@@ -18,7 +18,7 @@ export default function App() {
   const [chains, setChains] = useState<Chain[]>(SUPPORTED_CHAINS);
 
   // Connection configurations
-  const [walletAddress, setWalletAddress] = useState<string>("0xf71bbF442cd1ea0503569CFAb27f03304D0C3bB7");
+  const [walletAddress, setWalletAddress] = useState<string>("");
   const [providerName, setProviderName] = useState<string>("Crust Safe Wallet");
   const [thirdwebClientId, setThirdwebClientId] = useState<string>(() => {
     return localStorage.getItem("suki_thirdweb_client_id") || "d2ebf97dd1b46297647525a6dda30e88";
@@ -257,14 +257,23 @@ export default function App() {
 
             {/* Wallet core toggler */}
             {walletAddress ? (
-              <div className="flex items-center gap-2 bg-gradient-to-r from-pink-50 to-indigo-50 border border-pink-100 rounded-xl px-3.5 py-1.5 shadow-sm">
+              <div className="flex items-center gap-2 bg-gradient-to-r from-pink-50 to-indigo-50 border border-pink-100 rounded-xl px-3 py-1 px-3.5 shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span className="font-mono text-xs text-slate-700 font-bold">
                   {walletAddress.substring(0, 6)}...{walletAddress.substring(34, 40)}
                 </span>
-                <span className="text-[10px] text-pink-500 uppercase font-extrabold bg-pink-100 px-1.5 py-0.5 rounded leading-none hidden sm:inline">
+                <span className="text-[10px] text-pink-550 uppercase font-black bg-pink-100 px-1.5 py-0.5 rounded leading-none hidden sm:inline">
                   {providerName}
                 </span>
+                <button
+                  onClick={() => {
+                    setWalletAddress("");
+                    setSukiReaction("Crust portal closed. Wallet disconnected successfully! 🦞⚓");
+                  }}
+                  className="font-sans font-bold text-[10px] text-indigo-550 hover:text-rose-600 ml-1 hover:underline transition cursor-pointer"
+                >
+                  Disconnect
+                </button>
               </div>
             ) : (
               <button
