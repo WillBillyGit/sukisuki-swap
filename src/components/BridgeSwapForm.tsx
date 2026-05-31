@@ -3,7 +3,7 @@ import { Chain, Token } from "../types";
 import { ArrowDownUp, RefreshCw, Star, Info, Settings2, Zap, Hourglass } from "lucide-react";
 import { motion } from "motion/react";
 
-const marineChainsImg = "/src/assets/images/marine_chains_1780217348244.png";
+const marineChainsImg = "/assets/images/marine_chains_1780217348244.png";
 
 interface BridgeSwapFormProps {
   chains: Chain[];
