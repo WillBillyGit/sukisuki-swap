@@ -26,6 +26,8 @@ interface BridgeSwapFormProps {
     bridgeRoute: string
   ) => void;
   onInputValueChange: (amount: string) => void;
+  walletAddress: string;
+  onConnectWallet: () => void;
 }
 
 export default function BridgeSwapForm({
@@ -41,7 +43,9 @@ export default function BridgeSwapForm({
   payAmount,
   setPayAmount,
   onSwapExecute,
-  onInputValueChange
+  onInputValueChange,
+  walletAddress,
+  onConnectWallet
 }: BridgeSwapFormProps) {
   const [slippage, setSlippage] = useState("0.5");
   const [showSettings, setShowSettings] = useState(false);
@@ -459,27 +463,38 @@ export default function BridgeSwapForm({
       </div>
 
       {/* CTA Button */}
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        disabled={numericAmount <= 0 || numericAmount > sourceToken.balance}
-        onClick={handleBridgeAction}
-        className={`w-full py-4 px-6 rounded-2xl font-sans font-bold text-center text-white text-base shadow-lg transition duration-200 cursor-pointer ${
-          numericAmount <= 0
-            ? "bg-slate-200 text-slate-400 shadow-none cursor-not-allowed"
+      {!walletAddress ? (
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={onConnectWallet}
+          className="w-full py-4 px-6 rounded-2xl font-sans font-bold text-center text-white text-base shadow-lg bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 hover:opacity-95 shadow-indigo-100 transition duration-200 cursor-pointer"
+        >
+          Connect Wallet 🦞🔌
+        </motion.button>
+      ) : (
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          disabled={numericAmount <= 0 || numericAmount > sourceToken.balance}
+          onClick={handleBridgeAction}
+          className={`w-full py-4 px-6 rounded-2xl font-sans font-bold text-center text-white text-base shadow-lg transition duration-200 cursor-pointer ${
+            numericAmount <= 0
+              ? "bg-slate-200 text-slate-400 shadow-none cursor-not-allowed"
+              : numericAmount > sourceToken.balance
+              ? "bg-rose-400 hover:bg-rose-500 shadow-rose-100"
+              : "bg-gradient-to-r from-pink-500 via-rose-500 to-indigo-600 hover:opacity-95 shadow-pink-200"
+          }`}
+        >
+          {numericAmount <= 0
+            ? "Enter Amount to Swap"
             : numericAmount > sourceToken.balance
-            ? "bg-rose-400 hover:bg-rose-500 shadow-rose-100"
-            : "bg-gradient-to-r from-pink-500 via-rose-500 to-indigo-600 hover:opacity-95 shadow-pink-200"
-        }`}
-      >
-        {numericAmount <= 0
-          ? "Enter Amount to Swap"
-          : numericAmount > sourceToken.balance
-          ? "Insufficient Balance!"
-          : selectedSourceChain === selectedTargetChain
-          ? "Swap Inside Network"
-          : "Beam Across Chains! 🚀🌈"}
-      </motion.button>
+            ? "Insufficient Balance!"
+            : selectedSourceChain === selectedTargetChain
+            ? "Swap Inside Network"
+            : "Beam Across Chains! 🚀🌈"}
+        </motion.button>
+      )}
     </div>
   );
 }

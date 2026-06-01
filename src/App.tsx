@@ -334,6 +334,8 @@ export default function App() {
               setPayAmount={setPayAmount}
               onInputValueChange={handleInputValueChange}
               onSwapExecute={handleSwapExecute}
+              walletAddress={walletAddress}
+              onConnectWallet={() => setShowWalletModal(true)}
             />
 
             {/* SVG Interactive Line Chart & Active Tracker Grid */}
