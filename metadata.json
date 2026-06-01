@@ -1,6 +1,10 @@
 {
-  "name": "Crust Fund Swap",
-  "description": "An adorable and powerful kawaii-themed cross-chain swap and bridge dApp featuring Clawdy, your friendly Crust Fund lobster helper, tailored for crustfundfi.org.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "name": "Suki Kaia Bridge",
+  "description": "Secure, non-custodial cross-chain bonding curve and bridge protocol for Kaia and Base networks.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

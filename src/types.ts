@@ -1,40 +1,28 @@
 export interface Token {
-  id: string;
   symbol: string;
   name: string;
-  icon: string;
   decimals: number;
-  priceUsd: number;
-  balance: number;
+  balance: string;
+  logoUrl?: string;
+  address?: string;
 }
 
 export interface Chain {
   id: string;
   name: string;
-  icon: string;
-  color: string;
-  rpcUrl?: string;
-  explorerUrl: string;
-  isSupported: boolean;
+  logoUrl?: string;
   tokens: Token[];
+  explorerUrl?: string;
 }
 
 export interface BridgeTx {
   id: string;
+  timestamp: string;
   sourceChain: string;
   targetChain: string;
-  tokenSymbol: string;
-  amount: number;
-  status: "pending" | "processing" | "completed" | "failed";
-  timestamp: string;
-  hash: string;
-  estimatedArrivalSeconds: number;
-  secondsElapsed: number;
-}
-
-export interface ChatMessage {
-  id: string;
-  sender: "user" | "suki" | "crust";
-  text: string;
-  timestamp: string;
+  sourceToken: string;
+  targetToken: string;
+  amount: string;
+  status: "pending" | "completed" | "failed";
+  hash?: string;
 }

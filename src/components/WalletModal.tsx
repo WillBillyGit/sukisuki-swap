@@ -1,88 +1,97 @@
 import React from "react";
-import { X, ShieldCheck, Star } from "lucide-react";
-import { motion } from "motion/react";
+import { X, Check } from "lucide-react";
 
 interface WalletModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConnect: (address: string, providerName: string) => void;
+  onConnect: (address: string, provider: string) => void;
 }
 
 const PROVIDERS = [
-  { name: "MetaMask", icon: "🦊", color: "hover:bg-amber-50 hover:border-amber-200" },
-  { name: "Coinbase Wallet", icon: "🔵", color: "hover:bg-blue-50 hover:border-blue-200" },
-  { name: "WalletConnect", icon: "🌈", color: "hover:bg-sky-50 hover:border-sky-200" },
-  { name: "Suki Safe Wallet", icon: "🌸", color: "hover:bg-pink-50 hover:border-pink-200", badge: "Extra Cute!" }
+  { name: "Suki Safe Wallet", icon: "🌸", desc: "Local simulation mode with faucet assets" },
+  { name: "MetaMask", icon: "🦊", desc: "Injected Web3 browser extension" },
+  { name: "Coinbase Wallet", icon: "🛡️", desc: "Coinbase non-custodial wallet" },
 ];
 
 export default function WalletModal({ isOpen, onClose, onConnect }: WalletModalProps) {
   if (!isOpen) return null;
 
-  const handleProviderSelect = (prov: typeof PROVIDERS[0]) => {
-    // Generate a random, look-alike EVM address
-    const randomAddress = "0x" + Array.from({ length: 40 }, () => 
-      Math.floor(Math.random() * 16).toString(16)
-    ).join("");
-    onConnect(randomAddress, prov.name);
-    onClose();
+  const handleProviderSelect = async (prov: typeof PROVIDERS[0]) => {
+    if (prov.name === "Suki Safe Wallet") {
+      // Generate a random, look-alike EVM address for testing/demo purposes
+      const randomAddress = "0x" + Array.from({ length: 40 }, () => 
+        Math.floor(Math.random() * 16).toString(16)
+      ).join("");
+      onConnect(randomAddress, prov.name);
+      onClose();
+      return;
+    }
+
+    // Try establishing connection via real injected Web3 provider (window.ethereum)
+    if (typeof window !== "undefined" && (window as any).ethereum) {
+      try {
+        const anyWindow = window as any;
+        let selectedProvider = anyWindow.ethereum;
+
+        if (prov.name === "Coinbase Wallet" && anyWindow.ethereum.providers) {
+          selectedProvider = anyWindow.ethereum.providers.find((p: any) => p.isCoinbaseWallet) || anyWindow.ethereum;
+        } else if (prov.name === "MetaMask" && anyWindow.ethereum.providers) {
+          selectedProvider = anyWindow.ethereum.providers.find((p: any) => p.isMetaMask) || anyWindow.ethereum;
+        }
+
+        const accounts = await selectedProvider.request({ method: "eth_requestAccounts" });
+        if (accounts && accounts.length > 0) {
+          onConnect(accounts[0], prov.name);
+          onClose();
+        }
+      } catch (err: any) {
+        console.error("Wallet connection error:", err);
+        alert(`Failed to connect with ${prov.name}: ` + (err.message || err));
+      }
+    } else {
+      // Graceful fallback and instructions to download Web3 wallet
+      alert(`No Web3 browser wallet detected! To connect your real ${prov.name} address, please install the official browser extension or use on-chain sandbox modes.`);
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-white rounded-3xl p-6 max-w-sm w-full border border-pink-100 shadow-2xl relative"
-      >
-        {/* Top bar styling */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-pink-400 via-rose-300 to-indigo-500 rounded-t-3xl"></div>
-
-        {/* Close Button */}
+    <div id="wallet-connect-modal" class="fixed inset-0 z-50 bg-slate-950/45 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-150 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200 relative">
         <button
           onClick={onClose}
-          className="absolute top-3.5 right-3.5 p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+          class="absolute top-5 right-5 p-1 text-slate-400 hover:text-slate-600 transition-colors hover:bg-slate-50 rounded-full cursor-pointer"
         >
-          <X className="w-4 h-4" />
+          <X class="w-5 h-5" />
         </button>
 
-        {/* Header */}
-        <div className="text-center mt-3 mb-6">
-          <div className="w-11 h-11 bg-pink-100 text-pink-500 rounded-2xl mx-auto flex items-center justify-center text-lg shadow-sm">
-            🌸
-          </div>
-          <h3 className="font-sans font-bold text-slate-800 text-base mt-3">Connect Wallet</h3>
-          <p className="font-sans text-xs text-slate-400 mt-1">Select a portal to beam into Suki's swap networks</p>
+        <div>
+          <h3 class="font-sans font-bold text-slate-800 text-sm">Connect Web3 Protocol</h3>
+          <p class="font-sans text-[10px] text-slate-400 mt-0.5">Select your preferred pathway for signature</p>
         </div>
 
-        {/* Providers list */}
-        <div className="space-y-2.5">
+        <div class="flex flex-col gap-2.5">
           {PROVIDERS.map((prov) => (
             <button
               key={prov.name}
               onClick={() => handleProviderSelect(prov)}
-              className={`w-full py-3 px-4 rounded-xl border border-slate-100 bg-slate-50/50 flex justify-between items-center text-xs text-slate-700 font-bold transition cursor-pointer ${prov.color}`}
+              class="w-full text-left p-3.5 rounded-2xl border border-slate-100/80 hover:border-pink-250 hover:bg-slate-50/50 transition-all duration-155 flex items-center gap-3.5 group cursor-pointer"
             >
-              <div className="flex items-center gap-3">
-                <span className="text-lg">{prov.icon}</span>
-                <span>{prov.name}</span>
+              <div class="w-10 h-10 rounded-xl bg-slate-50/80 border border-slate-100 flex items-center justify-center text-xl group-hover:bg-white group-hover:scale-105 transition-all">
+                {prov.icon}
               </div>
-              {prov.badge && (
-                <span className="bg-pink-100 text-pink-600 text-[9px] font-extrabold px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
-                  <Star className="w-2.5 h-2.5 fill-pink-500" />
-                  {prov.badge}
-                </span>
-              )}
+              <div class="flex-1 min-w-0">
+                <div class="font-sans font-bold text-xs text-slate-800 flex items-center gap-1">
+                  <span>{prov.name}</span>
+                  {prov.name === "Suki Safe Wallet" && (
+                    <span class="text-[8px] bg-pink-100 text-pink-600 font-extrabold px-1 rounded-full uppercase scale-90">Simulated</span>
+                  )}
+                </div>
+                <p class="font-sans text-[10px] text-slate-400 truncate mt-0.5">{prov.desc}</p>
+              </div>
             </button>
           ))}
         </div>
-
-        {/* Info protection label */}
-        <div className="flex gap-2 items-center justify-center mt-5 text-[10px] text-slate-400 font-mono">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-          Securely and end-to-end encrypted integration
-        </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
